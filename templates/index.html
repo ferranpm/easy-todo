@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% block title %} ToDo {% endblock %}
 {% block body %}
-<form method="GET">
-	<input type="text" class="input--vertical" placeholder="ToDo ID" name="id_todo" />
-	<input type="submit" class="btn" />
+<form action="/create" method="POST">
+	<input type="submit" value="Create ToDo List" class="btn" />
 </form>
 {% endblock %}

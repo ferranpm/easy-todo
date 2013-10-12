@@ -21,6 +21,13 @@ class Connection:
 def index():
 	return render_template('index.html')
 
+@app.route('/create', methods=['POST'])
+def create():
+	with Connection() as c:
+		c.execute('INSERT INTO todos (title, password) VALUES (NULL, NULL)')
+		list_id = c.lastrowid
+	return redirect(url_for('todo', list_id=list_id))
+
 @app.route('/todo/<list_id>')
 def todo(list_id):
 	with Connection() as c:
