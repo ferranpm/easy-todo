@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Your ToDo list {% endblock %}
 {% block body %}
-{% for item in todo %}
 <script>
-	function mark(box) {
+	function toggle(box) {
 		id = $(box).data('id');
 		if ($(box).is(':checked'))
 			jQuery.post('/mark/' + id);
@@ -11,13 +10,38 @@
 			jQuery.post('/unmark/' + id);
 	}
 </script>
-<div>
-	<input type="checkbox" onclick="mark(this);" data-id="{{item[2]}}" {% if item[1] %}checked=""{% endif %} />
-	{{item[0]}}
+
+<h1>ToDo: {{list_id}}</h1>
+
+{% for item in todo %}
+<div class="item">
+	<input type="checkbox" onclick="toggle(this);" data-id="{{item[2]}}" {% if item[1] %}checked=""{% endif %} />
+	<span>{{item[0]}}</span>
 </div>
 {% endfor %}
+
 <form action="/add/{{list_id}}" method="POST">
 	<input type="text" placeholder="Item" class="input--xxlarge" name="todo" />
 	<input type="submit" class="btn" />
 </form>
+
+{% if not title %}
+<form action="/settitle" method="POST">
+	<input type="text" placeholder="Set title" class="input" name="title" />
+	<input type="submit" class="btn" />
+</form>
+{% endif %}
+
+{% if password %}
+<form action="/login" method="POST">
+	<input type="text" placeholder="Passord" class="input" name="password" />
+	<input type="submit" class="btn" />
+</form>
+{% else %}
+<form action="/setpassword" method="POST">
+	<input type="text" placeholder="Set password" class="input" name="password" />
+	<input type="submit" class="btn" />
+</form>
+{% endif %}
+
 {% endblock %}
