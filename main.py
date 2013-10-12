@@ -31,9 +31,18 @@ def create():
 @app.route('/todo/<list_id>')
 def todo(list_id):
 	with Connection() as c:
-		c.execute('SELECT todo, done, item_id FROM items WHERE list_id=(?)', (list_id,))
+		c.execute('SELECT title, password FROM todos WHERE list_id=?', (list_id,))
+		list_data = c.fetchone()
+		print(list_data)
+		c.execute('SELECT todo, done, item_id FROM items WHERE list_id=?', (list_id,))
 		todo = c.fetchall()
-	return render_template('todo.html', todo=todo, list_id=list_id)
+		data = {
+				'title': list_data[0],
+				'password': list_data[1],
+				'todo': todo,
+				'list_id': list_id
+				}
+	return render_template('todo.html', **data)
 
 @app.route('/add/<list_id>', methods=['POST'])
 def add_item(list_id):
@@ -51,6 +60,13 @@ def mark(item_id):
 def unmark(item_id):
 	with Connection() as c:
 		c.execute('UPDATE items SET done=0 WHERE item_id=?', item_id)
+
+@app.route('/settitle/<list_id>', methods=['POST'])
+def set_title(list_id):
+	title = request.form['title']
+	with Connection() as c:
+		c.execute('UPDATE todos SET title=? WHERE list_id=?', (title, list_id,))
+	return redirect(url_for('todo', list_id=list_id))
 
 if __name__ == '__main__':
 	app.debug = True

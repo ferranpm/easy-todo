@@ -11,7 +11,11 @@
 	}
 </script>
 
+{% if title %}
+<h1>ToDo: {{title}} ({{list_id}})</h1>
+{% else %}
 <h1>ToDo: {{list_id}}</h1>
+{% endif %}
 
 {% for item in todo %}
 <div class="item">
@@ -26,7 +30,7 @@
 </form>
 
 {% if not title %}
-<form action="/settitle" method="POST">
+<form action="/settitle/{{list_id}}" method="POST">
 	<input type="text" placeholder="Set title" class="input" name="title" />
 	<input type="submit" class="btn" />
 </form>
@@ -38,7 +42,7 @@
 	<input type="submit" class="btn" />
 </form>
 {% else %}
-<form action="/setpassword" method="POST">
+<form action="/setpassword/{{list_id}}" method="POST">
 	<input type="text" placeholder="Set password" class="input" name="password" />
 	<input type="submit" class="btn" />
 </form>

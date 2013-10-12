@@ -3,8 +3,8 @@ DROP TABLE IF EXISTS todos;
 
 CREATE TABLE todos (
 	list_id INTEGER PRIMARY KEY,
-	password VARCHAR(40),
 	title VARCHAR(40)
+	password VARCHAR(40),
 );
 
 CREATE TABLE items (
