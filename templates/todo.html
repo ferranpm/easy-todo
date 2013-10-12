@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Your ToDo list {% endblock %}
+{% block body %}
+{% for item in todo %}
+<script>
+	function mark(box) {
+		id = $(box).data('id');
+		if ($(box).is(':checked'))
+			jQuery.post('/mark/' + id);
+		else 
+			jQuery.post('/unmark/' + id);
+	}
+</script>
+<div>
+	<input type="checkbox" onclick="mark(this);" data-id="{{item[2]}}" {% if item[1] %}checked=""{% endif %} />
+	{{item[0]}}
+</div>
+{% endfor %}
+<form action="/add/{{list_id}}" method="POST">
+	<input type="text" placeholder="Item" class="input--xxlarge" name="todo" />
+	<input type="submit" class="btn" />
+</form>
+{% endblock %}

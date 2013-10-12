@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/rocket.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}" />
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    {% block body %}{% endblock %}
+  </body>
+</html>
