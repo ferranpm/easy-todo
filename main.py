@@ -24,7 +24,7 @@ def index():
 @app.route('/todo/<list_id>')
 def todo(list_id):
 	with Connection() as c:
-		c.execute('SELECT todo, done, id FROM item WHERE list_id=(?)', (list_id,))
+		c.execute('SELECT todo, done, id FROM items WHERE list_id=(?)', (list_id,))
 		todo = c.fetchall()
 	return render_template('todo.html', todo=todo, list_id=list_id)
 
@@ -32,18 +32,18 @@ def todo(list_id):
 def add_item(list_id):
 	text = request.form['todo']
 	with Connection() as c:
-		c.execute('INSERT INTO item (list_id, todo, done) VALUES (?, ?, 0)', (list_id, text,))
+		c.execute('INSERT INTO items (list_id, todo, done) VALUES (?, ?, 0)', (list_id, text,))
 	return redirect(url_for('todo', list_id=list_id))
 
 @app.route('/mark/<item_id>', methods=['POST'])
 def mark(item_id):
 	with Connection() as c:
-		c.execute('UPDATE item SET done=1 WHERE id=?', item_id)
+		c.execute('UPDATE items SET done=1 WHERE id=?', item_id)
 
 @app.route('/unmark/<item_id>', methods=['POST'])
 def unmark(item_id):
 	with Connection() as c:
-		c.execute('UPDATE item SET done=0 WHERE id=?', item_id)
+		c.execute('UPDATE items SET done=0 WHERE id=?', item_id)
 
 if __name__ == '__main__':
 	app.debug = True
