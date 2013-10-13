@@ -97,7 +97,3 @@ def create_numbered(list_id):
 	with connection as c:
 		# TODO
 		pass
-
-if __name__ == '__main__':
-	app.debug = True
-	app.run()
