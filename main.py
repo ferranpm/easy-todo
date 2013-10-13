@@ -5,12 +5,25 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from flask import url_for
+from contextlib import closing
+
 
 app = Flask(__name__)
 DATABASE = os.path.join(
 			os.path.dirname(os.path.abspath(__file__)),
 			'database'
 		)
+
+
+def connect_db():
+	return sqlite3.connect(DATABASE)
+
+def init_db():
+	with closing(connect_db()) as db:
+		with app.open_resource('schema.sql', mode='r') as f:
+			db.cursor().executescript(f.read())
+		db.commit()
+
 
 class Connection:
 
@@ -24,6 +37,7 @@ class Connection:
 	def __exit__(self, type, value, traceback):
 		self.conn.commit()
 		self.conn.close()
+
 
 connection = Connection(DATABASE)
 
