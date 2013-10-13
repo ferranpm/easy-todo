@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Your ToDo list {% endblock %}
 {% block body %}
+
 <script>
 	function toggle(box) {
 		id = $(box).data('id');
@@ -11,39 +12,46 @@
 	}
 </script>
 
-{% if title %}
-<h1>ToDo: {{title}} ({{list_id}})</h1>
-{% else %}
-<h1>ToDo: {{list_id}}</h1>
+<h1>ToDo ({{list_id}}){% if title %}: {{title}}</h1>{% else %}
 {% endif %}
 
-{% for item in todo %}
-<div class="item">
-	<input type="checkbox" onclick="toggle(this);" data-id="{{item[2]}}" {% if item[1] %}checked=""{% endif %} />
-	<span>{{item[0]}}</span>
-</div>
-{% endfor %}
+<table class="table table-hover">
+	<tr>
+		<th>#</th>
+		<th>Done</th>
+		<th>Todo</th>
+		<th>Erase</th>
+	</tr>
+	{% for item in todo %}
+	<tr>
+		<td>{{loop.index}}</td>
+		<td><input type="checkbox" onclick="toggle(this);" data-id="{{item[2]}}" {% if item[1] %}checked=""{% endif %} /></td>
+		<td><span>{{item[0]}}</span></td>
+		<td><a href="#" class="btn btn-danger">Erase</a></td>
+	</tr>
+	{% endfor %}
+</table>
 
-<form action="/add/{{list_id}}" method="POST">
-	<input type="text" placeholder="Item" class="input--xxlarge" name="todo" />
-	<input type="submit" class="btn" />
+<form action="/add/{{list_id}}" method="POST" class="">
+	<input type="text" placeholder="Item" name="todo" class="input-xxlarge" />
+	<input type="submit" class="btn btn-primary" />
 </form>
 
 {% if not title %}
 <form action="/settitle/{{list_id}}" method="POST">
-	<input type="text" placeholder="Set title" class="input" name="title" />
+	<input type="text" placeholder="Set title" name="title" class="input-large" />
 	<input type="submit" class="btn" />
 </form>
 {% endif %}
 
 {% if password %}
 <form action="/login" method="POST">
-	<input type="text" placeholder="Passord" class="input" name="password" />
+	<input type="text" placeholder="Passord" name="password" class="input" />
 	<input type="submit" class="btn" />
 </form>
 {% else %}
 <form action="/setpassword/{{list_id}}" method="POST">
-	<input type="text" placeholder="Set password" class="input" name="password" />
+	<input type="text" placeholder="Set password" name="password" class="input" />
 	<input type="submit" class="btn" />
 </form>
 {% endif %}
