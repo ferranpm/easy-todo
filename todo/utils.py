@@ -2,6 +2,7 @@ import sqlite3
 import os
 from contextlib import closing
 from . import DATABASE
+from . import app
 
 def connect_db():
 	return sqlite3.connect(DATABASE)
