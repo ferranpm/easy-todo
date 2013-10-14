@@ -47,14 +47,20 @@ def add_item(list_id):
 @app.route('/mark/<item_id>', methods=['POST'])
 def mark(item_id):
 	with connection as c:
-		c.execute('UPDATE items SET done=1 WHERE item_id=?', item_id)
+		c.execute('UPDATE items SET done=1 WHERE item_id=?', (item_id,))
 	return 'marked'
 
 @app.route('/unmark/<item_id>', methods=['POST'])
 def unmark(item_id):
 	with connection as c:
-		c.execute('UPDATE items SET done=0 WHERE item_id=?', item_id)
+		c.execute('UPDATE items SET done=0 WHERE item_id=?', (item_id,))
 	return 'unmarked'
+
+@app.route('/remove/<item_id>', methods=['POST'])
+def remove(item_id):
+	with connection as c:
+		c.execute('DELETE FROM items WHERE item_id=?', (item_id,))
+	return 'deleted'
 
 @app.route('/settitle/<list_id>', methods=['POST'])
 def set_title(list_id):

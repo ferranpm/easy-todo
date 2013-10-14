@@ -25,10 +25,12 @@
 		}
 	}
 
-function erase(event, tr) {
-	event.stopPropagation();
-	alert('Erase: ' + tr.data('id')); // TODO: Functional erase
-}
+	function remove(event, tr) {
+		event.stopPropagation();
+		id = tr.data('id');
+		jQuery.post('/remove/' + id);
+		tr.remove();
+	}
 </script>
 
 <div class="panel panel-default">
@@ -39,15 +41,13 @@ function erase(event, tr) {
 	<div class="panel-body">
 		<table class="table table-hover">
 			<tr>
-				<th>#</th>
 				<th>Todo</th>
-				<th>Erase</th>
+				<th>Remove</th>
 			</tr>
 			{% for item in todo %}
 			<tr onclick="toggle(event, $(this))" data-id="{{item.item_id}}" class="clickable {% if item.done %} done {% endif %}">
-				<td>{{loop.index}}</td>
 				<td><span>{{item.todo}}</span></td>
-				<td><a href="#" class="btn btn-danger" onclick="erase(event, $(this).closest('tr'))">Erase</a></td>
+				<td><a href="#" class="btn btn-danger" onclick="remove(event, $(this).closest('tr'))">Remove</a></td>
 			</tr>
 			{% endfor %}
 		</table>
