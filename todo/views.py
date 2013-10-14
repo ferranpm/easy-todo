@@ -27,13 +27,12 @@ def todo(list_id):
 	with connection as c:
 		c.execute('SELECT title, password FROM todos WHERE list_id=?', (list_id,))
 		list_data = c.fetchone()
-		print(list_data)
 		c.execute('SELECT todo, done, item_id FROM items WHERE list_id=?', (list_id,))
 		todo = c.fetchall()
 		data = {
 				'title': list_data[0],
 				'password': list_data[1],
-				'todo': todo,
+				'todo': [{'todo':t[0], 'done':t[1], 'item_id':t[2]} for t in todo],
 				'list_id': list_id
 				}
 	return render_template('todo.html', **data)
@@ -49,11 +48,13 @@ def add_item(list_id):
 def mark(item_id):
 	with connection as c:
 		c.execute('UPDATE items SET done=1 WHERE item_id=?', item_id)
+	return 'marked'
 
 @app.route('/unmark/<item_id>', methods=['POST'])
 def unmark(item_id):
 	with connection as c:
 		c.execute('UPDATE items SET done=0 WHERE item_id=?', item_id)
+	return 'unmarked'
 
 @app.route('/settitle/<list_id>', methods=['POST'])
 def set_title(list_id):

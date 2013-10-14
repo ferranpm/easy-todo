@@ -2,13 +2,32 @@
 {% block title %}Your ToDo list {% endblock %}
 {% block body %}
 
+<style>
+	.done {
+		text-decoration: line-through;
+	}
+	.clickable {
+		cursor: pointer;
+	}
+</style>
+
 <script>
-	function toggle(box) {
-		id = $(box).data('id');
-		if ($(box).is(':checked'))
-			jQuery.post('/mark/' + id);
-		else 
-			jQuery.post('/unmark/' + id);
+	function toggle(event, tr) {
+		event.stopPropagation();
+		id = tr.data('id');
+		if (tr.hasClass('done')) {
+				jQuery.post('/unmark/' + id);
+				tr.removeClass('done');
+			}
+		else {
+				jQuery.post('/mark/' + id);
+				tr.addClass('done');
+			}
+	}
+
+	function erase(event, tr) {
+		event.stopPropagation();
+		alert('Erase: ' + tr.data('id')); // TODO: Functional erase
 	}
 </script>
 
@@ -18,16 +37,14 @@
 <table class="table table-hover">
 	<tr>
 		<th>#</th>
-		<th>Done</th>
 		<th>Todo</th>
 		<th>Erase</th>
 	</tr>
 	{% for item in todo %}
-	<tr>
+	<tr onclick="toggle(event, $(this))" data-id="{{item.item_id}}" class="clickable {% if item.done %} done {% endif %}">
 		<td>{{loop.index}}</td>
-		<td><input type="checkbox" onclick="toggle(this);" data-id="{{item[2]}}" {% if item[1] %}checked=""{% endif %} /></td>
-		<td><span>{{item[0]}}</span></td>
-		<td><a href="#" class="btn btn-danger">Erase</a></td>
+		<td><span>{{item.todo}}</span></td>
+		<td><a href="#" class="btn btn-danger" onclick="erase(event, $(this).closest('tr'))">Erase</a></td>
 	</tr>
 	{% endfor %}
 </table>
