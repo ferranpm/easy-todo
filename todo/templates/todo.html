@@ -16,61 +16,68 @@
 		event.stopPropagation();
 		id = tr.data('id');
 		if (tr.hasClass('done')) {
-				jQuery.post('/unmark/' + id);
-				tr.removeClass('done');
-			}
+			jQuery.post('/unmark/' + id);
+			tr.removeClass('done');
+		}
 		else {
-				jQuery.post('/mark/' + id);
-				tr.addClass('done');
-			}
+			jQuery.post('/mark/' + id);
+			tr.addClass('done');
+		}
 	}
 
-	function erase(event, tr) {
-		event.stopPropagation();
-		alert('Erase: ' + tr.data('id')); // TODO: Functional erase
-	}
+function erase(event, tr) {
+	event.stopPropagation();
+	alert('Erase: ' + tr.data('id')); // TODO: Functional erase
+}
 </script>
 
-<h1>ToDo ({{list_id}}){% if title %}: {{title}}</h1>{% else %}
-{% endif %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">ToDo ({{list_id}}){% if title %}: {{title}}{% else %}
+			{% endif %}</h3>
+	</div>
+	<div class="panel-body">
+		<table class="table table-hover">
+			<tr>
+				<th>#</th>
+				<th>Todo</th>
+				<th>Erase</th>
+			</tr>
+			{% for item in todo %}
+			<tr onclick="toggle(event, $(this))" data-id="{{item.item_id}}" class="clickable {% if item.done %} done {% endif %}">
+				<td>{{loop.index}}</td>
+				<td><span>{{item.todo}}</span></td>
+				<td><a href="#" class="btn btn-danger" onclick="erase(event, $(this).closest('tr'))">Erase</a></td>
+			</tr>
+			{% endfor %}
+		</table>
 
-<table class="table table-hover">
-	<tr>
-		<th>#</th>
-		<th>Todo</th>
-		<th>Erase</th>
-	</tr>
-	{% for item in todo %}
-	<tr onclick="toggle(event, $(this))" data-id="{{item.item_id}}" class="clickable {% if item.done %} done {% endif %}">
-		<td>{{loop.index}}</td>
-		<td><span>{{item.todo}}</span></td>
-		<td><a href="#" class="btn btn-danger" onclick="erase(event, $(this).closest('tr'))">Erase</a></td>
-	</tr>
-	{% endfor %}
-</table>
+		<div class="container">
+			<form class="form-inline" action="/add/{{list_id}}" method="POST" class="">
+				<input type="text" placeholder="Item" name="todo" class="input-xxlarge" />
+				<input type="submit" class="btn btn-primary btn-sm" />
+			</form>
 
-<form action="/add/{{list_id}}" method="POST" class="">
-	<input type="text" placeholder="Item" name="todo" class="input-xxlarge" />
-	<input type="submit" class="btn btn-primary" />
-</form>
+			{% if not title %}
+			<form class="form-inline" action="/settitle/{{list_id}}" method="POST">
+				<input type="text" placeholder="Set title" name="title" class="" />
+				<input type="submit" class="btn btn-sm" />
+			</form>
+			{% endif %}
 
-{% if not title %}
-<form action="/settitle/{{list_id}}" method="POST">
-	<input type="text" placeholder="Set title" name="title" class="input-large" />
-	<input type="submit" class="btn" />
-</form>
-{% endif %}
-
-{% if password %}
-<form action="/login" method="POST">
-	<input type="text" placeholder="Passord" name="password" class="input" />
-	<input type="submit" class="btn" />
-</form>
-{% else %}
-<form action="/setpassword/{{list_id}}" method="POST">
-	<input type="text" placeholder="Set password" name="password" class="input" />
-	<input type="submit" class="btn" />
-</form>
-{% endif %}
+			{% if password %}
+			<form class="form-inline" action="/login" method="POST">
+				<input type="text" placeholder="Passord" name="password" class="input" />
+				<input type="submit" class="btn btn-sm" />
+			</form>
+			{% else %}
+			<form class="form-inline" action="/setpassword/{{list_id}}" method="POST">
+				<input type="text" placeholder="Set password" name="password" class="input" />
+				<input type="submit" class="btn btn-sm" />
+			</form>
+		</div>
+		{% endif %}
+	</div>
+</div>
 
 {% endblock %}
