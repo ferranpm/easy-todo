@@ -66,12 +66,12 @@
 
 			{% if password %}
 			<form class="form-inline" action="/login" method="POST">
-				<input type="text" placeholder="Passord" name="password" class="input" />
+				<input type="password" placeholder="Passord" name="password" class="input" />
 				<input type="submit" class="btn btn-sm" />
 			</form>
 			{% else %}
 			<form class="form-inline" action="/setpassword/{{list_id}}" method="POST">
-				<input type="text" placeholder="Set password" name="password" class="input" />
+				<input type="password" placeholder="Set password" name="password" class="input" />
 				<input type="submit" class="btn btn-sm" />
 			</form>
 		</div>
