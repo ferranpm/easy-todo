@@ -44,6 +44,14 @@ def add_item(list_id):
 		c.execute('INSERT INTO items (list_id, todo, done) VALUES (?, ?, 0)', (list_id, text,))
 	return redirect(url_for('todo', list_id=list_id))
 
+@app.route('/remove/<item_id>', methods=['GET'])
+def remove(item_id):
+	with connection as c:
+		c.execute('SELECT list_id FROM items WHERE item_id=?', (item_id,))
+		list_id = c.fetchone()[0]
+		c.execute('DELETE FROM items WHERE item_id=?', (item_id,))
+	return redirect(url_for('todo', list_id=list_id))
+
 @app.route('/mark/<item_id>', methods=['POST'])
 def mark(item_id):
 	with connection as c:
@@ -56,21 +64,9 @@ def unmark(item_id):
 		c.execute('UPDATE items SET done=0 WHERE item_id=?', (item_id,))
 	return 'unmarked'
 
-@app.route('/remove/<item_id>', methods=['POST'])
-def remove(item_id):
-	with connection as c:
-		c.execute('DELETE FROM items WHERE item_id=?', (item_id,))
-	return 'deleted'
-
 @app.route('/settitle/<list_id>', methods=['POST'])
 def set_title(list_id):
 	title = request.form['title']
 	with connection as c:
 		c.execute('UPDATE todos SET title=? WHERE list_id=?', (title, list_id,))
 	return redirect(url_for('todo', list_id=list_id))
-
-@app.route('/create/<list_id>', methods=['GET'])
-def create_numbered(list_id):
-	with connection as c:
-		# TODO
-		pass
