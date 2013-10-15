@@ -22,11 +22,13 @@ def create():
 		list_id = c.lastrowid
 	return redirect(url_for('todo', list_id=list_id))
 
-@app.route('/todo/<list_id>')
+@app.route('/<list_id>')
 def todo(list_id):
 	with connection as c:
 		c.execute('SELECT title, password FROM todos WHERE list_id=?', (list_id,))
 		list_data = c.fetchone()
+		if not list_data:
+			return render_template('notfound.html', list_id=list_id)
 		c.execute('SELECT todo, done, item_id FROM items WHERE list_id=?', (list_id,))
 		todo = c.fetchall()
 		data = {
