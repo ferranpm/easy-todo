@@ -24,9 +24,9 @@
 			ch.prop('checked', true);
 		}
 	}
-	function a_handler(e) {
-		e.stopPropagation();
-	}
+function a_handler(e) {
+	e.stopPropagation();
+}
 </script>
 
 <div class="panel panel-default">
@@ -58,28 +58,39 @@
 		</table>
 
 		<div class="container">
-
-			<form class="form-inline" action="/add/{{list_id}}" method="POST" class="">
-				<input type="text" placeholder="Item" name="todo" class="input-xxlarge" />
-				<input type="submit" class="btn btn-primary btn-sm" />
+			<form action="/add/{{list_id}}" method="POST" class="form-inline">
+				<div class="col-lg-10">
+					<input type="text" placeholder="Item" name="todo" class="form-control" />
+				</div>
+				<input type="submit" class="btn btn-primary" />
 			</form>
+		</div>
 
+		<div class="container">
 			{% if not title %}
 			<form class="form-inline" action="/settitle/{{list_id}}" method="POST">
-				<input type="text" placeholder="Set title" name="title" class="" />
-				<input type="submit" class="btn btn-sm" />
+				<div class="col-lg-4">
+					<input type="text" placeholder="Set title" name="title" class="form-control" />
+				</div>
+				<input type="submit" class="btn btn-success" />
 			</form>
 			{% endif %}
+		</div>
 
+		<div class="container">
 			{% if password %}
 			<form class="form-inline" action="/login" method="POST">
-				<input type="password" placeholder="Passord" name="password" class="input" />
-				<input type="submit" class="btn btn-sm" />
+				<div class="col-lg-4">
+					<input type="password" placeholder="Passord" name="password" class="form-control" />
+				</div>
+				<input type="submit" class="btn btn-success" />
 			</form>
 			{% else %}
 			<form class="form-inline" action="/setpassword/{{list_id}}" method="POST">
-				<input type="password" placeholder="Set password" name="password" class="input" />
-				<input type="submit" class="btn btn-sm" />
+				<div class="col-lg-4">
+					<input type="password" placeholder="Set password" name="password" class="form-control" />
+				</div>
+				<input type="submit" class="btn btn-success" />
 			</form>
 			{% endif %}
 		</div>
