@@ -8,12 +8,11 @@
 </style>
 
 <script>
-	function toggle(event) {
-		event.stopPropagation();
-		event.preventDefault();
-		tr = $(event.target).closest('tr');
-		ch = tr.find('input');
-		id = tr.data('id');
+	function toggle(e) {
+		e.stopPropagation();
+		var tr = $(e.target).closest('tr');
+		var ch = tr.find('input[type="checkbox"]');
+		var id = tr.data('id');
 		if (tr.hasClass('done')) {
 			jQuery.post('/unmark/' + id);
 			tr.removeClass('done');
@@ -25,20 +24,14 @@
 			ch.prop('checked', true);
 		}
 	}
-
-	function checkbox_handler(event) {
-		event.stopPropagation();
-		event.preventDefault();
-	}
-	function a_handler(event) {
-		event.stopPropagation();
+	function a_handler(e) {
+		e.stopPropagation();
 	}
 </script>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h3 class="panel-title">ToDo ({{list_id}}){% if title %}: {{title}}{% else %}
-			{% endif %}</h3>
+		<h3 class="panel-title">ToDo ({{list_id}}){% if title %}: {{title}}{% else %} {% endif %}</h3>
 	</div>
 	<div class="panel-body">
 		<table class="table table-hover">
@@ -51,7 +44,7 @@
 			{% for item in todo %}
 			<tr onclick="toggle(event, $(this))" data-id="{{item.item_id}}" class="clickable {% if item.done %} done {% endif %}">
 				<td>{{loop.index}}</td>
-				<td><input type="checkbox" onclick="checkbox_handler(event);" {% if item.done %} checked {% endif %} class="checkbox" /></td>
+				<td><input type="checkbox" {% if item.done %} checked {% endif %} class="checkbox" /></td>
 				<td><span>{{item.todo}}</span></td>
 				<td><a href="/remove/{{item.item_id}}" onclick="a_handler(event);" class="btn btn-danger">Remove</a></td>
 			</tr>
