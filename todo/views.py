@@ -52,6 +52,12 @@ def remove(item_id):
 		c.execute('DELETE FROM items WHERE item_id=?', (item_id,))
 	return redirect(url_for('todo', list_id=list_id))
 
+@app.route('/remove_marked/<list_id>', methods=['GET'])
+def remove_marked(list_id):
+	with connection as c:
+		c.execute('DELETE FROM items WHERE list_id=? AND done=1', (list_id,))
+	return redirect(url_for('todo', list_id=list_id))
+
 @app.route('/mark/<item_id>', methods=['POST'])
 def mark(item_id):
 	with connection as c:

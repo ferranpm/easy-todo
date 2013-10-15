@@ -49,9 +49,16 @@
 				<td><a href="/remove/{{item.item_id}}" onclick="a_handler(event);" class="btn btn-danger">Remove</a></td>
 			</tr>
 			{% endfor %}
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td><a href="/remove_marked/{{list_id}}" class="btn btn-danger">Remove marked</a></td>
+			</tr>
 		</table>
 
 		<div class="container">
+
 			<form class="form-inline" action="/add/{{list_id}}" method="POST" class="">
 				<input type="text" placeholder="Item" name="todo" class="input-xxlarge" />
 				<input type="submit" class="btn btn-primary btn-sm" />
