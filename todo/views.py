@@ -18,7 +18,9 @@ def index():
 @app.route('/create', methods=['POST'])
 def create():
 	with connection as c:
-		c.execute('INSERT INTO todos (title, password) VALUES (NULL, NULL)')
+		title = request.form['title']
+		password = request.form['password']
+		c.execute('INSERT INTO todos (title, password) VALUES (?, ?)', (title, password,))
 		list_id = c.lastrowid
 	return redirect(url_for('todo', list_id=list_id))
 
