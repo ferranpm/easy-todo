@@ -7,6 +7,7 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from flask import url_for
+from flask import make_response
 from . import app
 from . import DATABASE
 from . import utils
@@ -82,3 +83,26 @@ def set_title(list_id):
 	with connection as c:
 		c.execute('UPDATE todos SET title=? WHERE list_id=?', (title, list_id,))
 	return redirect(url_for('todo', list_id=list_id))
+
+@app.route('/setpassword/<list_id>', methods=['POST'])
+def set_password(list_id):
+	password = request.form['password']
+	with connection as c:
+		c.execute('UPDATE todos SET password=? WHERE list_id=?', (password, list_id,))
+	return redirect(url_for('todo', list_id=list_id))
+
+@app.route('/login/<list_id>', methods=['POST'])
+def login(list_id):
+	# TODO: ENCODE PASSWORDS!!!!
+	password = request.form['password']
+	with connection as c:
+		c.execute('SELECT password FROM todos WHERE list_id=?', (list_id,))
+		db_password = c.fetchone()
+	if password == db_password:
+		response = make_response(redirect(url_for('todo', list_id=list_id)))
+		response.set_cookie('password', str(password))
+	else:
+		print('NONO')
+		response = make_response(redirect(url_for('todo', list_id=list_id)))
+		response.set_data('error')
+	return response

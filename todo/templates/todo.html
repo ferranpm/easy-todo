@@ -82,8 +82,8 @@ function a_handler(e) {
 		</div>
 
 		<div class="container">
-			{% if password %}
-			<form action="/login" method="POST">
+			{% if password and not logged %}
+			<form action="/login/{{list_id}}" method="POST">
 				<div class="form-group">
 					<div class="col-lg-4">
 						<input type="password" placeholder="Passord" name="password" class="form-control" />
@@ -91,7 +91,7 @@ function a_handler(e) {
 					<input type="submit" class="btn btn-success" />
 				</div>
 			</form>
-			{% else %}
+			{% elif not password %}
 			<form action="/setpassword/{{list_id}}" method="POST">
 				<div class="form-group">
 					<div class="col-lg-4">
