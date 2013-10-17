@@ -1,5 +1,7 @@
-import sqlite3
 import os
+import random
+import sqlite3
+import string
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -20,8 +22,8 @@ def create():
 	with connection as c:
 		title = request.form['title']
 		password = request.form['password']
-		c.execute('INSERT INTO todos (title, password) VALUES (?, ?)', (title, password,))
-		list_id = c.lastrowid
+		list_id = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for x in range(5))
+		c.execute('INSERT INTO todos (list_id, title, password) VALUES (?, ?, ?)', (list_id, title, password,))
 	return redirect(url_for('todo', list_id=list_id))
 
 @app.route('/<list_id>')

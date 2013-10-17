@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS items;
 DROP TABLE IF EXISTS todos;
 
 CREATE TABLE todos (
-	list_id INTEGER PRIMARY KEY,
+	list_id VARCHAR(10) PRIMARY KEY,
 	title VARCHAR(40),
 	password VARCHAR(40)
 );
