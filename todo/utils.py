@@ -13,6 +13,8 @@ def db_init():
             db.cursor().executescript(f.read())
         db.commit()
 
+def db_exists():
+    return os.path.isfile(DATABASE)
 
 class Connection:
 
