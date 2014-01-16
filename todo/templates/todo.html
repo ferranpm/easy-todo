@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}Your ToDo list {% endblock %}
+{% block title %}
+{% if title %}
+{{title}} -- 
+{% endif %}
+Your ToDo list
+{% endblock %}
 {% block body %}
 
 <style>
