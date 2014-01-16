@@ -8,84 +8,84 @@ Your ToDo list
 {% block body %}
 
 <style>
-	.done { text-decoration: line-through; }
-	.clickable { cursor: pointer; }
+    .done { text-decoration: line-through; }
+    .clickable { cursor: pointer; }
 </style>
 
 <div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">ToDo ({{list_id}}){% if title %}: {{title}}{% else %} {% endif %}</h3>
-	</div>
-	<div class="panel-body">
-		<table class="table table-hover">
-			<tr>
-				<th>#</th>
-				<th>Done</th>
-				<th>Todo</th>
-				<th>Remove</th>
-			</tr>
-			{% for item in todo %}
-			<tr onclick="toggle(event, $(this))" data-id="{{item.item_id}}" class="clickable {% if item.done %} done {% endif %}">
-				<td>{{loop.index}}</td>
-				<td><input type="checkbox" {% if item.done %} checked {% endif %} class="checkbox" /></td>
-				<td><span>{{item.todo}}</span></td>
-				<td><a href="/remove/{{item.item_id}}" onclick="a_handler(event);" class="btn btn-danger">Remove</a></td>
-			</tr>
-			{% endfor %}
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td><a href="/remove_marked/{{list_id}}" class="btn btn-danger">Remove marked</a></td>
-			</tr>
-		</table>
+    <div class="panel-heading">
+        <h3 class="panel-title">ToDo ({{list_id}}){% if title %}: {{title}}{% else %} {% endif %}</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <tr>
+                <th>#</th>
+                <th>Done</th>
+                <th>Todo</th>
+                <th>Remove</th>
+            </tr>
+            {% for item in todo %}
+            <tr onclick="toggle(event, $(this))" data-id="{{item.item_id}}" class="clickable {% if item.done %} done {% endif %}">
+                <td>{{loop.index}}</td>
+                <td><input type="checkbox" {% if item.done %} checked {% endif %} class="checkbox" /></td>
+                <td><span>{{item.todo}}</span></td>
+                <td><a href="/remove/{{item.item_id}}" onclick="a_handler(event);" class="btn btn-danger">Remove</a></td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><a href="/remove_marked/{{list_id}}" class="btn btn-danger">Remove marked</a></td>
+            </tr>
+        </table>
 
-		<div class="container">
-			<form action="/add/{{list_id}}" method="POST">
-				<div class="form-group">
-					<div class="col-lg-10">
-						<input type="text" name="todo" placeholder="Item" class="form-control" />
-					</div>
-					<input type="submit" class="btn btn-primary" />
-				</div>
-			</form>
-		</div>
+        <div class="container">
+            <form action="/add/{{list_id}}" method="POST">
+                <div class="form-group">
+                    <div class="col-lg-10">
+                        <input type="text" name="todo" placeholder="Item" class="form-control" />
+                    </div>
+                    <input type="submit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
 
-		<div class="container">
-			{% if not title %}
-			<form action="/settitle/{{list_id}}" method="POST">
-				<div class="form-group">
-					<div class="col-lg-4">
-						<input type="text" name="title" placeholder="Set title" class="form-control" />
-					</div>
-					<input type="submit" class="btn btn-success" />
-				</div>
-			</form>
-			{% endif %}
-		</div>
+        <div class="container">
+            {% if not title %}
+            <form action="/settitle/{{list_id}}" method="POST">
+                <div class="form-group">
+                    <div class="col-lg-4">
+                        <input type="text" name="title" placeholder="Set title" class="form-control" />
+                    </div>
+                    <input type="submit" class="btn btn-success" />
+                </div>
+            </form>
+            {% endif %}
+        </div>
 
-		<div class="container">
-			{% if password and not logged %}
-			<form action="/login/{{list_id}}" method="POST">
-				<div class="form-group">
-					<div class="col-lg-4">
-						<input type="password" placeholder="Passord" name="password" class="form-control" />
-					</div>
-					<input type="submit" class="btn btn-success" />
-				</div>
-			</form>
-			{% elif not password %}
-			<form action="/setpassword/{{list_id}}" method="POST">
-				<div class="form-group">
-					<div class="col-lg-4">
-						<input type="password" placeholder="Set password" name="password" class="form-control" />
-					</div>
-					<input type="submit" class="btn btn-success" />
-				</div>
-			</form>
-			{% endif %}
-		</div>
-	</div>
+        <div class="container">
+            {% if password and not logged %}
+            <form action="/login/{{list_id}}" method="POST">
+                <div class="form-group">
+                    <div class="col-lg-4">
+                        <input type="password" placeholder="Passord" name="password" class="form-control" />
+                    </div>
+                    <input type="submit" class="btn btn-success" />
+                </div>
+            </form>
+            {% elif not password %}
+            <form action="/setpassword/{{list_id}}" method="POST">
+                <div class="form-group">
+                    <div class="col-lg-4">
+                        <input type="password" placeholder="Set password" name="password" class="form-control" />
+                    </div>
+                    <input type="submit" class="btn btn-success" />
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
 <!-- Placed at the end of the document so the pages load faster -->
