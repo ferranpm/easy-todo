@@ -7,28 +7,6 @@
 	.clickable { cursor: pointer; }
 </style>
 
-<script>
-	function toggle(e) {
-		e.stopPropagation();
-		var tr = $(e.target).closest('tr');
-		var ch = tr.find('input[type="checkbox"]');
-		var id = tr.data('id');
-		if (tr.hasClass('done')) {
-			jQuery.post('/unmark/' + id);
-			tr.removeClass('done');
-			ch.prop('checked', false);
-		}
-		else {
-			jQuery.post('/mark/' + id);
-			tr.addClass('done');
-			ch.prop('checked', true);
-		}
-	}
-function a_handler(e) {
-	e.stopPropagation();
-}
-</script>
-
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h3 class="panel-title">ToDo ({{list_id}}){% if title %}: {{title}}{% else %} {% endif %}</h3>
@@ -104,5 +82,8 @@ function a_handler(e) {
 		</div>
 	</div>
 </div>
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="{{ url_for('static', filename='js/todo.js') }}"></script>
 
 {% endblock %}
