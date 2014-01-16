@@ -43,6 +43,8 @@ def todo(list_id):
         todo = c.fetchall()
         data = {
                         'title': list_data[0],
+                        'logged': 'password' in request.cookies,
+                        'has_password': len(list_data[1]) > 0,
                         'password': list_data[1],
                         'todo': [{'todo':t[0], 'done':t[1], 'item_id':t[2]} for t in todo],
                         'list_id': list_id
@@ -96,6 +98,7 @@ def set_title(list_id):
     return redirect(url_for('todo', list_id=list_id))
 
 # Sets the password to the list list_id.
+# TODO: ENCODE PASSWORDS!!!!
 @app.route('/setpassword/<list_id>', methods=['POST'])
 def set_password(list_id):
     password = request.form['password']
@@ -103,19 +106,24 @@ def set_password(list_id):
         c.execute('UPDATE todos SET password=? WHERE list_id=?', (password, list_id,))
     return redirect(url_for('todo', list_id=list_id))
 
-# TODO: Logs in the user so he can edit a todo list with password.
+# Logs in the user so he can edit a todo list with password.
 @app.route('/login/<list_id>', methods=['POST'])
 def login(list_id):
     # TODO: ENCODE PASSWORDS!!!!
     password = request.form['password']
     with connection as c:
         c.execute('SELECT password FROM todos WHERE list_id=?', (list_id,))
-        db_password = c.fetchone()
+        db_password = c.fetchone()[0]
     if password == db_password:
         response = make_response(redirect(url_for('todo', list_id=list_id)))
-        response.set_cookie('password', str(password))
+        response.set_cookie('password', password)
     else:
-        print('NONO')
         response = make_response(redirect(url_for('todo', list_id=list_id)))
-        response.set_data('error')
+    return response
+
+# Logs out the current session
+@app.route('/logout/<list_id>', methods=['POST'])
+def logout(list_id):
+    response = make_response(redirect(url_for('todo', list_id=list_id)))
+    response.set_cookie('password', '', expires=0)
     return response

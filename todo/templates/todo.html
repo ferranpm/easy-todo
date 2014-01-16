@@ -17,6 +17,7 @@ Your ToDo list
         <h3 class="panel-title">ToDo ({{list_id}}){% if title %}: {{title}}{% else %} {% endif %}</h3>
     </div>
     <div class="panel-body">
+        {% if not has_password or (has_password and logged) %}
         <table class="table table-hover">
             <tr>
                 <th>#</th>
@@ -63,9 +64,10 @@ Your ToDo list
             </form>
             {% endif %}
         </div>
+        {% endif %}
 
         <div class="container">
-            {% if password and not logged %}
+            {% if has_password and not logged %}
             <form action="/login/{{list_id}}" method="POST">
                 <div class="form-group">
                     <div class="col-lg-4">
@@ -74,13 +76,19 @@ Your ToDo list
                     <input type="submit" class="btn btn-success" />
                 </div>
             </form>
-            {% elif not password %}
+            {% elif not has_password %}
             <form action="/setpassword/{{list_id}}" method="POST">
                 <div class="form-group">
                     <div class="col-lg-4">
                         <input type="password" placeholder="Set password" name="password" class="form-control" />
                     </div>
                     <input type="submit" class="btn btn-success" />
+                </div>
+            </form>
+            {% else %}
+            <form action="/logout/{{list_id}}" method="POST">
+                <div class="form-group">
+                    <input type="submit" value="Log Out" class="btn" />
                 </div>
             </form>
             {% endif %}
