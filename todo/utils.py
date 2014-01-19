@@ -4,11 +4,11 @@ from contextlib import closing
 from . import DATABASE
 from . import app
 
-def connect_db():
+def db_connect():
     return sqlite3.connect(DATABASE)
 
 def db_init():
-    with closing(connect_db()) as db:
+    with closing(db_connect()) as db:
         with app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
