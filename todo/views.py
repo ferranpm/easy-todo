@@ -104,7 +104,9 @@ def set_password(list_id):
     hashed_password = security.get_hash(request.form['password'])
     with connection as c:
         c.execute('UPDATE todos SET password=? WHERE list_id=?', (hashed_password, list_id,))
-    return redirect(url_for('todo', list_id=list_id))
+    response = make_response(redirect(url_for('todo', list_id=list_id)))
+    response.set_cookie('password', hashed_password)
+    return response
 
 # Logs in the user so he can edit a todo list with password.
 @app.route('/login/<list_id>', methods=['POST'])
