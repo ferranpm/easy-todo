@@ -14,7 +14,7 @@ Your ToDo list
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title">ToDo ({{list_id}}){% if title %}: {{title}}{% else %} {% endif %}</h3>
+        <h3 class="panel-title"><a href="/">ToDo</a> ({{list_id}}){% if title %}: {{title}}{% else %} {% endif %}</h3>
     </div>
     <div class="panel-body">
         {% if not has_password or (has_password and logged) %}
@@ -52,8 +52,8 @@ Your ToDo list
             </form>
         </div>
 
+        {% if not title %}
         <div class="container">
-            {% if not title %}
             <form action="/settitle/{{list_id}}" method="POST">
                 <div class="form-group">
                     <div class="col-lg-4">
@@ -88,7 +88,9 @@ Your ToDo list
             {% else %}
             <form action="/logout/{{list_id}}" method="POST">
                 <div class="form-group">
-                    <input type="submit" value="Log Out" class="btn" />
+                    <div class="col-lg-12">
+                        <input type="submit" value="Log Out" class="btn" />
+                    </div>
                 </div>
             </form>
             {% endif %}
