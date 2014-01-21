@@ -11,6 +11,7 @@ from flask import make_response
 from . import app
 from . import DATABASE
 from . import utils
+from . import security
 
 connection = utils.Connection(DATABASE)
 
@@ -25,9 +26,9 @@ def index():
 def create():
     with connection as c:
         title = request.form['title']
-        password = request.form['password']
+        hashed_password = security.get_hash(request.form['password'])
         list_id = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for x in range(5))
-        c.execute('INSERT INTO todos (list_id, title, password) VALUES (?, ?, ?)', (list_id, title, password,))
+        c.execute('INSERT INTO todos (list_id, title, password) VALUES (?, ?, ?)', (list_id, title, hashed_password,))
     return redirect(url_for('todo', list_id=list_id))
 
 # Returns the view for the list with list_id. TODO: If a password is set for that
@@ -98,25 +99,23 @@ def set_title(list_id):
     return redirect(url_for('todo', list_id=list_id))
 
 # Sets the password to the list list_id.
-# TODO: ENCODE PASSWORDS!!!!
 @app.route('/setpassword/<list_id>', methods=['POST'])
 def set_password(list_id):
-    password = request.form['password']
+    hashed_password = security.get_hash(request.form['password'])
     with connection as c:
-        c.execute('UPDATE todos SET password=? WHERE list_id=?', (password, list_id,))
+        c.execute('UPDATE todos SET password=? WHERE list_id=?', (hashed_password, list_id,))
     return redirect(url_for('todo', list_id=list_id))
 
 # Logs in the user so he can edit a todo list with password.
 @app.route('/login/<list_id>', methods=['POST'])
 def login(list_id):
-    # TODO: ENCODE PASSWORDS!!!!
-    password = request.form['password']
+    raw_password = request.form['password']
     with connection as c:
         c.execute('SELECT password FROM todos WHERE list_id=?', (list_id,))
         db_password = c.fetchone()[0]
-    if password == db_password:
+    if security.verify_password(raw_password, db_password):
         response = make_response(redirect(url_for('todo', list_id=list_id)))
-        response.set_cookie('password', password)
+        response.set_cookie('password', db_password)
     else:
         response = make_response(redirect(url_for('todo', list_id=list_id)))
     return response
