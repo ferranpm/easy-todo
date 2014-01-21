@@ -26,7 +26,9 @@ def index():
 def create():
     with connection as c:
         title = request.form['title']
-        hashed_password = security.get_hash(request.form['password'])
+        hashed_password = ''
+        if len(request.form['password']) > 0:
+            hashed_password = security.get_hash(request.form['password'])
         list_id = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for x in range(5))
         c.execute('INSERT INTO todos (list_id, title, password) VALUES (?, ?, ?)', (list_id, title, hashed_password,))
     return redirect(url_for('todo', list_id=list_id))
@@ -101,11 +103,13 @@ def set_title(list_id):
 # Sets the password to the list list_id.
 @app.route('/setpassword/<list_id>', methods=['POST'])
 def set_password(list_id):
-    hashed_password = security.get_hash(request.form['password'])
-    with connection as c:
-        c.execute('UPDATE todos SET password=? WHERE list_id=?', (hashed_password, list_id,))
+    raw_password = request.form['password']
     response = make_response(redirect(url_for('todo', list_id=list_id)))
-    response.set_cookie('password', hashed_password)
+    if raw_password:
+        hashed_password = security.get_hash(raw_password)
+        with connection as c:
+            c.execute('UPDATE todos SET password=? WHERE list_id=?', (hashed_password, list_id,))
+        response.set_cookie('password', hashed_password)
     return response
 
 # Logs in the user so he can edit a todo list with password.
