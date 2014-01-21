@@ -16,6 +16,16 @@ def db_init():
 def db_exists():
     return os.path.isfile(DATABASE)
 
+def db_valid_todo_id(list_id):
+    valid_length = len(list_id) > 0
+    connection = Connection(DATABASE)
+    exists = True
+    with connection as c:
+        c.execute('SELECT * FROM todos WHERE list_id=?', (list_id,))
+        if not c.fetchone():
+            exists = False
+    return not exists and valid_length
+
 class Connection:
 
     def __init__(self, path):

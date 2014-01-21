@@ -24,17 +24,18 @@ def index():
 # list. Same for the title.
 @app.route('/create', methods=['POST'])
 def create():
-    with connection as c:
-        title = request.form['title']
-        hashed_password = ''
-        if len(request.form['password']) > 0:
-            hashed_password = security.get_hash(request.form['password'])
+    title = request.form['title']
+    hashed_password = ''
+    if len(request.form['password']) > 0:
+        hashed_password = security.get_hash(request.form['password'])
+    list_id = ''
+    while not utils.db_valid_todo_id(list_id):
         list_id = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for x in range(5))
-        c.execute('INSERT INTO todos (list_id, title, password) VALUES (?, ?, ?)', (list_id, title, hashed_password,))
+    with connection as c:
+            c.execute('INSERT INTO todos (list_id, title, password) VALUES (?, ?, ?)', (list_id, title, hashed_password,))
     return redirect(url_for('todo', list_id=list_id))
 
-# Returns the view for the list with list_id. TODO: If a password is set for that
-# list, it should not show the items until logged in.
+# Returns the view for the list with list_id.
 @app.route('/<list_id>')
 def todo(list_id):
     with connection as c:
