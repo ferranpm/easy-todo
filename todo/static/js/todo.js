@@ -18,3 +18,7 @@ function toggle(e) {
 function a_handler(e) {
     e.stopPropagation();
 }
+
+function check_delete() {
+    return confirm("Are you sure you want to delete the list?");
+}

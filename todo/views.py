@@ -35,6 +35,14 @@ def create():
             c.execute('INSERT INTO todos (list_id, title, password) VALUES (?, ?, ?)', (list_id, title, hashed_password,))
     return redirect(url_for('todo', list_id=list_id))
 
+# Deletes a list
+@app.route('/delete/<list_id>', methods=['POST'])
+def delete(list_id):
+    with connection as c:
+        c.execute('DELETE FROM items WHERE list_id=?', (list_id,))
+        c.execute('DELETE FROM todos WHERE list_id=?', (list_id,))
+    return redirect('/')
+
 # Returns the view for the list with list_id.
 @app.route('/<list_id>')
 def todo(list_id):
