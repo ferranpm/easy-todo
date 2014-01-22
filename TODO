@@ -1,0 +1,3 @@
+* Clever way to discover free IDs [views.py]
+* Synchronize mark/unmark of items
+* Check add/remove... if logged, has password etc.
