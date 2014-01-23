@@ -26,6 +26,9 @@ def db_valid_todo_id(list_id):
             exists = False
     return not exists and valid_length
 
+def has_permission(list_id, cookies):
+    return True
+
 class Connection:
 
     def __init__(self, path):

@@ -26,11 +26,11 @@ Your ToDo list
                 <th>Remove</th>
             </tr>
             {% for item in todo %}
-            <tr onclick="toggle(event, $(this))" data-id="{{item.item_id}}" class="clickable {% if item.done %} done {% endif %}">
+            <tr onclick="toggle(event, $(this));" data-itemid="{{item.item_id}}" data-listid="{{list_id}}" class="clickable {% if item.done %} done {% endif %}">
                 <td>{{loop.index}}</td>
                 <td><input type="checkbox" {% if item.done %} checked {% endif %} class="checkbox" /></td>
                 <td><span>{{item.todo}}</span></td>
-                <td><a href="/remove/{{item.item_id}}" onclick="a_handler(event);" class="btn btn-danger">Remove</a></td>
+                <td><a href="/remove/{{list_id}}/{{item.item_id}}" onclick="a_handler(event);" class="btn btn-danger">Remove</a></td>
             </tr>
             {% endfor %}
             <tr>

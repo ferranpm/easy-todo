@@ -38,9 +38,10 @@ def create():
 # Deletes a list
 @app.route('/delete/<list_id>', methods=['POST'])
 def delete(list_id):
-    with connection as c:
-        c.execute('DELETE FROM items WHERE list_id=?', (list_id,))
-        c.execute('DELETE FROM todos WHERE list_id=?', (list_id,))
+    if utils.has_permission(list_id, request.cookies):
+        with connection as c:
+            c.execute('DELETE FROM items WHERE list_id=?', (list_id,))
+            c.execute('DELETE FROM todos WHERE list_id=?', (list_id,))
     return redirect('/')
 
 # Returns the view for the list with list_id.
@@ -66,47 +67,53 @@ def todo(list_id):
 # Adds the item into the list list_id.
 @app.route('/add/<list_id>', methods=['POST'])
 def add_item(list_id):
-    text = request.form['todo']
-    with connection as c:
-        c.execute('INSERT INTO items (list_id, todo, done) VALUES (?, ?, 0)', (list_id, text,))
+    if utils.has_permission(list_id, request.cookies):
+        text = request.form['todo']
+        with connection as c:
+            c.execute('INSERT INTO items (list_id, todo, done) VALUES (?, ?, 0)', (list_id, text,))
     return redirect(url_for('todo', list_id=list_id))
 
 # Removes the item from the list list_id.
-@app.route('/remove/<item_id>', methods=['GET'])
-def remove(item_id):
-    with connection as c:
-        c.execute('SELECT list_id FROM items WHERE item_id=?', (item_id,))
-        list_id = c.fetchone()[0]
-        c.execute('DELETE FROM items WHERE item_id=?', (item_id,))
+@app.route('/remove/<list_id>/<item_id>', methods=['GET'])
+def remove(list_id, item_id):
+    if utils.has_permission(list_id, request.cookies):
+        with connection as c:
+            c.execute('SELECT list_id FROM items WHERE item_id=?', (item_id,))
+            list_id = c.fetchone()[0]
+            c.execute('DELETE FROM items WHERE item_id=?', (item_id,))
     return redirect(url_for('todo', list_id=list_id))
 
 # Removes all marked items from the list list_id.
 @app.route('/remove_marked/<list_id>', methods=['GET'])
 def remove_marked(list_id):
-    with connection as c:
-        c.execute('DELETE FROM items WHERE list_id=? AND done=1', (list_id,))
+    if utils.has_permission(list_id, request.cookies):
+        with connection as c:
+            c.execute('DELETE FROM items WHERE list_id=? AND done=1', (list_id,))
     return redirect(url_for('todo', list_id=list_id))
 
 # Marks the item item_id.
-@app.route('/mark/<item_id>', methods=['POST'])
-def mark(item_id):
-    with connection as c:
-        c.execute('UPDATE items SET done=1 WHERE item_id=?', (item_id,))
+@app.route('/mark/<list_id>/<item_id>', methods=['POST'])
+def mark(list_id, item_id):
+    if utils.has_permission(list_id, request.cookies):
+        with connection as c:
+            c.execute('UPDATE items SET done=1 WHERE item_id=?', (item_id,))
     return 'marked'
 
 # Unmarks the item item_id.
-@app.route('/unmark/<item_id>', methods=['POST'])
-def unmark(item_id):
-    with connection as c:
-        c.execute('UPDATE items SET done=0 WHERE item_id=?', (item_id,))
+@app.route('/unmark/<list_id>/<item_id>', methods=['POST'])
+def unmark(list_id, item_id):
+    if utils.has_permission(list_id, request.cookies):
+        with connection as c:
+            c.execute('UPDATE items SET done=0 WHERE item_id=?', (item_id,))
     return 'unmarked'
 
 # Sets the title to the list list_id.
 @app.route('/settitle/<list_id>', methods=['POST'])
 def set_title(list_id):
-    title = request.form['title']
-    with connection as c:
-        c.execute('UPDATE todos SET title=? WHERE list_id=?', (title, list_id,))
+    if utils.has_permission(list_id, request.cookies):
+        title = request.form['title']
+        with connection as c:
+            c.execute('UPDATE todos SET title=? WHERE list_id=?', (title, list_id,))
     return redirect(url_for('todo', list_id=list_id))
 
 # Sets the password to the list list_id.

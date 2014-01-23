@@ -1,15 +1,15 @@
-function toggle(e) {
+function toggle(e, tr) {
     e.stopPropagation();
-    var tr = $(e.target).closest('tr');
     var ch = tr.find('input[type="checkbox"]');
-    var id = tr.data('id');
+    var item_id = tr.data('itemid');
+    var list_id = tr.data('listid');
     if (tr.hasClass('done')) {
-        jQuery.post('/unmark/' + id);
+        jQuery.post('/unmark/' + list_id + '/' + item_id);
         tr.removeClass('done');
         ch.prop('checked', false);
     }
     else {
-        jQuery.post('/mark/' + id);
+        jQuery.post('/mark/' + list_id + '/' + item_id);
         tr.addClass('done');
         ch.prop('checked', true);
     }
