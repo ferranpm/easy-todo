@@ -4,12 +4,12 @@ function toggle(e, tr) {
     var item_id = tr.data('itemid');
     var list_id = tr.data('listid');
     if (tr.hasClass('done')) {
-        jQuery.post('/unmark/' + list_id + '/' + item_id);
+        jQuery.post('/unmark/' + list_id + '/' + item_id, document.cookie);
         tr.removeClass('done');
         ch.prop('checked', false);
     }
     else {
-        jQuery.post('/mark/' + list_id + '/' + item_id);
+        jQuery.post('/mark/' + list_id + '/' + item_id, document.cookie);
         tr.addClass('done');
         ch.prop('checked', true);
     }
