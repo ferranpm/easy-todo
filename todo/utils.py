@@ -1,8 +1,17 @@
-import sqlite3
-import os
-from contextlib import closing
 from . import DATABASE
 from . import app
+from contextlib import closing
+from passlib.hash import sha256_crypt
+import os
+import sqlite3
+
+
+
+def get_hash(raw_password):
+    return sha256_crypt.encrypt(raw_password)
+
+def verify_password(raw_password, hashed_password):
+    return sha256_crypt.verify(raw_password, hashed_password)
 
 class Connection:
 
