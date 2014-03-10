@@ -12,7 +12,9 @@ from . import app
 from . import DATABASE
 from . import utils
 from . import security
+from . import models
 
+# TODO: remove this connection (only use the one in models.py)
 connection = utils.Connection(DATABASE)
 
 # Just return the static page index.html
@@ -39,81 +41,65 @@ def create():
 @app.route('/delete/<list_id>', methods=['POST'])
 def delete(list_id):
     if utils.has_permission(list_id, request.cookies):
-        with connection as c:
-            c.execute('DELETE FROM items WHERE list_id=?', (list_id,))
-            c.execute('DELETE FROM todos WHERE list_id=?', (list_id,))
+        li = models.List.get_by_id(list_id)
+        li.delete()
     return redirect('/')
 
 # Returns the view for the list with list_id.
 @app.route('/<list_id>')
 def todo(list_id):
-    with connection as c:
-        c.execute('SELECT title, password FROM todos WHERE list_id=?', (list_id,))
-        list_data = c.fetchone()
-        if not list_data:
-            return render_template('notfound.html', list_id=list_id)
-        c.execute('SELECT todo, done, item_id FROM items WHERE list_id=?', (list_id,))
-        todo = c.fetchall()
-        data = {
-                        'title': list_data[0],
-                        'logged': 'password' in request.cookies,
-                        'has_password': len(list_data[1]) > 0,
-                        'password': list_data[1],
-                        'todo': [{'todo':t[0], 'done':t[1], 'item_id':t[2]} for t in todo],
-                        'list_id': list_id
-                        }
-    return render_template('todo.html', **data)
+    li = models.List.get_by_id(list_id)
+    if not li:
+        return render_template('notfound.html', list_id=list_id)
+    # TODO: Check if logged in
+    return render_template('todo.html', li=li)
 
 # Adds the item into the list list_id.
 @app.route('/add/<list_id>', methods=['POST'])
 def add_item(list_id):
     if utils.has_permission(list_id, request.cookies):
         text = request.form['todo']
-        with connection as c:
-            c.execute('INSERT INTO items (list_id, todo, done) VALUES (?, ?, 0)', (list_id, text,))
+        models.Item.new(list_id, text, False)
     return redirect(url_for('todo', list_id=list_id))
 
 # Removes the item from the list list_id.
 @app.route('/remove/<list_id>/<item_id>', methods=['GET'])
 def remove(list_id, item_id):
     if utils.has_permission(list_id, request.cookies):
-        with connection as c:
-            c.execute('SELECT list_id FROM items WHERE item_id=?', (item_id,))
-            list_id = c.fetchone()[0]
-            c.execute('DELETE FROM items WHERE item_id=?', (item_id,))
+        models.Item.remove(list_id, item_id)
     return redirect(url_for('todo', list_id=list_id))
 
 # Removes all marked items from the list list_id.
 @app.route('/remove_marked/<list_id>', methods=['GET'])
 def remove_marked(list_id):
     if utils.has_permission(list_id, request.cookies):
-        with connection as c:
-            c.execute('DELETE FROM items WHERE list_id=? AND done=1', (list_id,))
+        li = models.List.get_by_id(list_id)
+        li.remove_marked()
     return redirect(url_for('todo', list_id=list_id))
 
 # Marks the item item_id.
 @app.route('/mark/<list_id>/<item_id>', methods=['POST'])
 def mark(list_id, item_id):
     if utils.has_permission(list_id, request.cookies):
-        with connection as c:
-            c.execute('UPDATE items SET done=1 WHERE item_id=?', (item_id,))
-    return 'marked'
+        item = models.Item.get_by_id(list_id, item_id)
+        item.mark()
+    return redirect(url_for('todo', list_id=list_id))
 
 # Unmarks the item item_id.
 @app.route('/unmark/<list_id>/<item_id>', methods=['POST'])
 def unmark(list_id, item_id):
     if utils.has_permission(list_id, request.cookies):
-        with connection as c:
-            c.execute('UPDATE items SET done=0 WHERE item_id=?', (item_id,))
-    return 'unmarked'
+        item = models.Item.get_by_id(list_id, item_id)
+        item.unmark()
+    return redirect(url_for('todo', list_id=list_id))
 
 # Sets the title to the list list_id.
 @app.route('/settitle/<list_id>', methods=['POST'])
 def set_title(list_id):
     if utils.has_permission(list_id, request.cookies):
         title = request.form['title']
-        with connection as c:
-            c.execute('UPDATE todos SET title=? WHERE list_id=?', (title, list_id,))
+        li = models.List.get_by_id(list_id)
+        li.set_title(title)
     return redirect(url_for('todo', list_id=list_id))
 
 # Sets the password to the list list_id.
@@ -121,10 +107,9 @@ def set_title(list_id):
 def set_password(list_id):
     raw_password = request.form['password']
     response = make_response(redirect(url_for('todo', list_id=list_id)))
-    if raw_password:
-        hashed_password = security.get_hash(raw_password)
-        with connection as c:
-            c.execute('UPDATE todos SET password=? WHERE list_id=?', (hashed_password, list_id,))
+    li = models.List.get_by_id(list_id)
+    hashed_password = li.set_password(raw_password)
+    if hashed_password:
         response.set_cookie('password', hashed_password)
     return response
 
@@ -132,12 +117,10 @@ def set_password(list_id):
 @app.route('/login/<list_id>', methods=['POST'])
 def login(list_id):
     raw_password = request.form['password']
-    with connection as c:
-        c.execute('SELECT password FROM todos WHERE list_id=?', (list_id,))
-        db_password = c.fetchone()[0]
-    if security.verify_password(raw_password, db_password):
+    li = models.List.get_by_id(list_id)
+    if utils.verify_password(raw_password, li.get_password()):
         response = make_response(redirect(url_for('todo', list_id=list_id)))
-        response.set_cookie('password', db_password)
+        response.set_cookie('password', li.get_password())
     else:
         response = make_response(redirect(url_for('todo', list_id=list_id)))
     return response

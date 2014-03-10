@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}
-{% if title %}
-{{title}} -- 
+{% if li.get_title() %}
+{{li.get_title()}} -- 
 {% endif %}
 Your ToDo list
 {% endblock %}
@@ -14,10 +14,11 @@ Your ToDo list
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title"><a href="/">ToDo</a> ({{list_id}}){% if title %}: {{title}}{% else %} {% endif %}</h3>
+        <h3 class="panel-title"><a href="/">ToDo</a> ({{li.get_id()}}){% if li.get_title() %}: {{li.get_title()}}{% else %} {% endif %}</h3>
     </div>
     <div class="panel-body">
-        {% if not has_password or (has_password and logged) %}
+        <!-- TODO: how to manage logged??? -->
+        {% if not li.has_password() or (li.has_password() and logged) %}
         <table class="table table-hover">
             <tr>
                 <th>#</th>
@@ -25,24 +26,34 @@ Your ToDo list
                 <th>Todo</th>
                 <th>Remove</th>
             </tr>
-            {% for item in todo %}
-            <tr onclick="toggle(event, $(this));" data-itemid="{{item.item_id}}" data-listid="{{list_id}}" class="clickable {% if item.done %} done {% endif %}">
+            {% for item in li.get_items() %}
+            <tr
+                onclick="toggle(event, $(this));"
+                data-itemid="{{item.get_id()}}"
+                data-listid="{{li.get_id()}}"
+                class="clickable {% if item.is_done() %} done {% endif %}" >
                 <td>{{loop.index}}</td>
-                <td><input type="checkbox" {% if item.done %} checked {% endif %} class="checkbox" /></td>
-                <td><span>{{item.todo}}</span></td>
-                <td><a href="/remove/{{list_id}}/{{item.item_id}}" onclick="a_handler(event);" class="btn btn-danger">Remove</a></td>
+                <td><span
+                        class="
+                        {% if item.is_done() %}
+                        glyphicon-ok
+                        {% else %}
+                        glyphicon-remove
+                        {% endif %}"></span></td>
+                <td><span>{{item.get_text()}}</span></td>
+                <td><a href="/remove/{{li.get_id()}}/{{item.get_id()}}" onclick="a_handler(event);" class="btn btn-danger">Remove</a></td>
             </tr>
             {% endfor %}
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td><a href="/remove_marked/{{list_id}}" class="btn btn-danger">Remove marked</a></td>
+                <td><a href="/remove_marked/{{li.get_id()}}" class="btn btn-danger">Remove marked</a></td>
             </tr>
         </table>
 
         <div class="container">
-            <form action="/add/{{list_id}}" method="POST">
+            <form action="/add/{{li.get_id()}}" method="POST">
                 <div class="form-group">
                     <div class="col-lg-10">
                         <input type="text" name="todo" placeholder="Item" class="form-control" />
@@ -52,9 +63,9 @@ Your ToDo list
             </form>
         </div>
 
-        {% if not title %}
+        {% if not li.get_title() %}
         <div class="container">
-            <form action="/settitle/{{list_id}}" method="POST">
+            <form action="/settitle/{{li.get_id()}}" method="POST">
                 <div class="form-group">
                     <div class="col-lg-4">
                         <input type="text" name="title" placeholder="Set title" class="form-control" />
@@ -67,8 +78,8 @@ Your ToDo list
         {% endif %}
 
         <div class="container">
-            {% if has_password and not logged %}
-            <form action="/login/{{list_id}}" method="POST">
+            {% if li.has_password() and not logged %}
+            <form action="/login/{{li.get_id()}}" method="POST">
                 <div class="form-group">
                     <div class="col-lg-4">
                         <input type="password" placeholder="Passord" name="password" class="form-control" />
@@ -76,8 +87,8 @@ Your ToDo list
                     <input type="submit" class="btn btn-success" />
                 </div>
             </form>
-            {% elif not has_password %}
-            <form action="/setpassword/{{list_id}}" method="POST">
+            {% elif not li.has_password() %}
+            <form action="/setpassword/{{li.get_id()}}" method="POST">
                 <div class="form-group">
                     <div class="col-lg-4">
                         <input type="password" placeholder="Set password" name="password" class="form-control" />
@@ -86,7 +97,7 @@ Your ToDo list
                 </div>
             </form>
             {% else %}
-            <form action="/logout/{{list_id}}" method="POST">
+            <form action="/logout/{{li.get_id()}}" method="POST">
                 <div class="form-group">
                     <div class="col-lg-12">
                         <input type="submit" value="Log Out" class="btn" />
@@ -94,7 +105,7 @@ Your ToDo list
                 </div>
             </form>
             {% endif %}
-            <form action="/delete/{{list_id}}" method="POST" onsubmit="return check_delete();">
+            <form action="/delete/{{li.get_id()}}" method="POST" onsubmit="return check_delete();">
                 <div class="form-group">
                     <div class="col-lg-12">
                         <input type="submit" value="Delete list" class="btn btn-danger" />
