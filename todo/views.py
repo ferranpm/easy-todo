@@ -70,7 +70,7 @@ def remove_marked(list_id):
     return redirect(url_for('todo', list_id=list_id))
 
 # Marks the item item_id.
-@app.route('/mark/<list_id>/<item_id>', methods=['POST'])
+@app.route('/mark/<list_id>/<item_id>', methods=['GET'])
 def mark(list_id, item_id):
     if utils.has_permission(list_id, request.cookies):
         item = models.Item.get_by_id(list_id, item_id)
@@ -78,7 +78,7 @@ def mark(list_id, item_id):
     return redirect(url_for('todo', list_id=list_id))
 
 # Unmarks the item item_id.
-@app.route('/unmark/<list_id>/<item_id>', methods=['POST'])
+@app.route('/unmark/<list_id>/<item_id>', methods=['GET'])
 def unmark(list_id, item_id):
     if utils.has_permission(list_id, request.cookies):
         item = models.Item.get_by_id(list_id, item_id)

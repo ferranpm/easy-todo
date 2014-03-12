@@ -7,14 +7,15 @@ Your ToDo list
 {% endblock %}
 {% block body %}
 
-<style>
-    .done { text-decoration: line-through; }
-    .clickable { cursor: pointer; }
-</style>
-
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title"><a href="/">ToDo</a> ({{li.get_id()}}){% if li.get_title() %}: {{li.get_title()}}{% else %} {% endif %}</h3>
+        <h3 class="panel-title">
+            <a href="/">ToDo</a>
+            ({{li.get_id()}})
+            {% if li.get_title() %}
+            : {{li.get_title()}}
+            {% endif %}
+        </h3>
     </div>
     <div class="panel-body">
         <!-- TODO: how to manage logged??? -->
@@ -27,21 +28,21 @@ Your ToDo list
                 <th>Remove</th>
             </tr>
             {% for item in li.get_items() %}
-            <tr
-                onclick="toggle(event, $(this));"
-                data-itemid="{{item.get_id()}}"
-                data-listid="{{li.get_id()}}"
-                class="clickable {% if item.is_done() %} done {% endif %}" >
+            <tr style="cursor: pointer">
                 <td>{{loop.index}}</td>
-                <td><span
-                        class="glyphicon 
-                        {% if item.is_done() %}
-                        glyphicon-ok
-                        {% else %}
-                        glyphicon-remove
-                        {% endif %}"></span></td>
+                <td>
+                    {% if not item.is_done() %}
+                    <a href="/mark/{{li.get_id()}}/{{item.get_id()}}">
+                        <span class="glyphicon glyphicon-remove"> </span>
+                    </a>
+                    {% else %}
+                    <a href="/unmark/{{li.get_id()}}/{{item.get_id()}}">
+                        <span class="glyphicon glyphicon-ok"> </span>
+                    </a>
+                    {% endif %}
+                </td>
                 <td><span>{{item.get_text()}}</span></td>
-                <td><a href="/remove/{{li.get_id()}}/{{item.get_id()}}" onclick="a_handler(event);" class="btn btn-danger">Remove</a></td>
+                <td><a href="/remove/{{li.get_id()}}/{{item.get_id()}}"  class="btn btn-danger">Remove</a></td>
             </tr>
             {% endfor %}
             <tr>
@@ -117,6 +118,10 @@ Your ToDo list
 </div>
 
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="{{ url_for('static', filename='js/todo.js') }}"></script>
+<script>
+    function check_delete() {
+        return confirm("Are you sure you want to delete the list?");
+    }
+</script>
 
 {% endblock %}
