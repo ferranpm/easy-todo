@@ -141,7 +141,7 @@ class Item(object):
 
     @classmethod
     def remove(cls, list_id, item_id):
-        with connection as c:
+        with utils.connection as c:
             c.execute("""
                     DELETE FROM items
                     WHERE list_id=? AND item_id=?
