@@ -1,7 +1,5 @@
 import os
-import random
 import sqlite3
-import string
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -27,15 +25,9 @@ def index():
 @app.route('/create', methods=['POST'])
 def create():
     title = request.form['title']
-    hashed_password = ''
-    if len(request.form['password']) > 0:
-        hashed_password = security.get_hash(request.form['password'])
-    list_id = ''
-    while not utils.db_valid_todo_id(list_id):
-        list_id = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for x in range(5))
-    with connection as c:
-            c.execute('INSERT INTO todos (list_id, title, password) VALUES (?, ?, ?)', (list_id, title, hashed_password,))
-    return redirect(url_for('todo', list_id=list_id))
+    password = request.form['password']
+    li = models.List.create(title, password)
+    return redirect(url_for('todo', list_id=li.get_id()))
 
 # Deletes a list
 @app.route('/delete/<list_id>', methods=['POST'])

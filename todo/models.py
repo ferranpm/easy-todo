@@ -1,4 +1,6 @@
 from . import utils
+import random
+import string
 from . import DATABASE
 
 class List(object):
@@ -33,6 +35,7 @@ class List(object):
                     SET title=?
                     WHERE list_id=?
                     """, (title, self.list_id))
+        self.title = title
 
     def get_title(self):
         return self.title
@@ -40,6 +43,7 @@ class List(object):
     def set_password(self, raw_password):
         if len(raw_password) > 0:
             hashed_password = utils.get_hash(raw_password)
+            self.password = hashed_password
             with utils.connection as c:
                 c.execute("""
                         UPDATE todos
@@ -74,6 +78,22 @@ class List(object):
                     DELETE FROM items
                     WHERE list_id=? AND done=1
                     """, (self.list_id,))
+
+    @classmethod
+    def create(cls, title, password):
+        hashed_password = ''
+        if len(password) > 0:
+            hashed_password = security.get_hash(request.form['password'])
+        list_id = ''
+        while not utils.db_valid_todo_id(list_id):
+            list_id = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for x in range(5))
+        with utils.connection as c:
+                c.execute("""
+                        INSERT INTO todos
+                        (list_id, title, password)
+                        VALUES (?, ?, ?)
+                        """, (list_id, title, hashed_password,))
+        return List(list_id, title, hashed_password)
 
     @classmethod
     def get_by_id(cls, list_id):
