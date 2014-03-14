@@ -9,7 +9,6 @@ from flask import make_response
 from . import app
 from . import DATABASE
 from . import utils
-from . import security
 from . import models
 
 # TODO: remove this connection (only use the one in models.py)
@@ -43,8 +42,15 @@ def todo(list_id):
     li = models.List.get_by_id(list_id)
     if not li:
         return render_template('notfound.html', list_id=list_id)
-    # TODO: Check if logged in
-    return render_template('todo.html', li=li)
+    key = 'password_' + list_id
+    permission = False
+    if li.has_password():
+        if request.cookies.has_key(key):
+            if request.cookies[key] == li.get_password():
+                permission = True
+    else:
+        permission = True
+    return render_template('todo.html', li=li, permission=permission)
 
 # Adds the item into the list list_id.
 @app.route('/add/<list_id>', methods=['POST'])
@@ -102,7 +108,7 @@ def set_password(list_id):
     li = models.List.get_by_id(list_id)
     hashed_password = li.set_password(raw_password)
     if hashed_password:
-        response.set_cookie('password', hashed_password)
+        response.set_cookie('password_' + list_id, hashed_password)
     return response
 
 # Logs in the user so he can edit a todo list with password.
@@ -112,7 +118,7 @@ def login(list_id):
     li = models.List.get_by_id(list_id)
     if utils.verify_password(raw_password, li.get_password()):
         response = make_response(redirect(url_for('todo', list_id=list_id)))
-        response.set_cookie('password', li.get_password())
+        response.set_cookie('password_' + list_id, li.get_password())
     else:
         response = make_response(redirect(url_for('todo', list_id=list_id)))
     return response
@@ -121,5 +127,5 @@ def login(list_id):
 @app.route('/logout/<list_id>', methods=['POST'])
 def logout(list_id):
     response = make_response(redirect(url_for('todo', list_id=list_id)))
-    response.set_cookie('password', '', expires=0)
+    response.set_cookie('password_' + list_id, '', expires=0)
     return response

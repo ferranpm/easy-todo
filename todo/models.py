@@ -83,7 +83,7 @@ class List(object):
     def create(cls, title, password):
         hashed_password = ''
         if len(password) > 0:
-            hashed_password = security.get_hash(request.form['password'])
+            hashed_password = utils.get_hash(password)
         list_id = ''
         while not utils.db_valid_todo_id(list_id):
             list_id = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for x in range(5))

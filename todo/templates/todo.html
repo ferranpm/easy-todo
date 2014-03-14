@@ -18,8 +18,7 @@ Your ToDo list
         </h3>
     </div>
     <div class="panel-body">
-        <!-- TODO: how to manage logged??? -->
-        {% if not li.has_password() or (li.has_password() and logged) %}
+        {% if permission %}
         <table class="table table-hover">
             <tr>
                 <th>#</th>
@@ -79,7 +78,7 @@ Your ToDo list
         {% endif %}
 
         <div class="container">
-            {% if li.has_password() and not logged %}
+            {% if li.has_password() and not permission %}
             <form action="/login/{{li.get_id()}}" method="POST">
                 <div class="form-group">
                     <div class="col-lg-4">
