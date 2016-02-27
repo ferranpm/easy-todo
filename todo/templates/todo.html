@@ -48,7 +48,7 @@ Your ToDo list
                 <td></td>
                 <td></td>
                 <td></td>
-                <td><a href="/remove_marked/{{li.get_id()}}" class="btn btn-danger">Remove marked</a></td>
+                <td><a href="/remove_marked/{{li.get_id()}}" class="btn btn-danger" onclick="return check_delete();">Remove marked</a></td>
             </tr>
         </table>
 
@@ -118,6 +118,10 @@ Your ToDo list
 
 <!-- Placed at the end of the document so the pages load faster -->
 <script>
+    function check_delete_marked() {
+        return confirm("Are you sure you want to delete the marked items?");
+    }
+
     function check_delete() {
         return confirm("Are you sure you want to delete the list?");
     }
