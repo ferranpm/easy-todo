@@ -4,12 +4,11 @@
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
     </head>
     <body>
         <div class="container">
             {% block body %}{% endblock %}
         </div>
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     </body>
 </html>

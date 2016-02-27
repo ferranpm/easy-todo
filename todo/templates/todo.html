@@ -55,7 +55,7 @@ Your ToDo list
         <div class="container">
             <form action="/add/{{li.get_id()}}" method="POST">
                 <div class="form-group">
-                    <div class="col-lg-10">
+                    <div>
                         <input type="text" name="todo" placeholder="Item" class="form-control" />
                     </div>
                     <input type="submit" class="btn btn-primary" />
@@ -67,7 +67,7 @@ Your ToDo list
         <div class="container">
             <form action="/settitle/{{li.get_id()}}" method="POST">
                 <div class="form-group">
-                    <div class="col-lg-4">
+                    <div>
                         <input type="text" name="title" placeholder="Set title" class="form-control" />
                     </div>
                     <input type="submit" class="btn btn-success" />
@@ -81,7 +81,7 @@ Your ToDo list
             {% if li.has_password() and not permission %}
             <form action="/login/{{li.get_id()}}" method="POST">
                 <div class="form-group">
-                    <div class="col-lg-4">
+                    <div>
                         <input type="password" placeholder="Passord" name="password" class="form-control" />
                     </div>
                     <input type="submit" class="btn btn-success" />
@@ -90,7 +90,7 @@ Your ToDo list
             {% elif not li.has_password() %}
             <form action="/setpassword/{{li.get_id()}}" method="POST">
                 <div class="form-group">
-                    <div class="col-lg-4">
+                    <div>
                         <input type="password" placeholder="Set password" name="password" class="form-control" />
                     </div>
                     <input type="submit" class="btn btn-success" />
@@ -99,7 +99,7 @@ Your ToDo list
             {% else %}
             <form action="/logout/{{li.get_id()}}" method="POST">
                 <div class="form-group">
-                    <div class="col-lg-12">
+                    <div>
                         <input type="submit" value="Log Out" class="btn" />
                     </div>
                 </div>
@@ -107,7 +107,7 @@ Your ToDo list
             {% endif %}
             <form action="/delete/{{li.get_id()}}" method="POST" onsubmit="return check_delete();">
                 <div class="form-group">
-                    <div class="col-lg-12">
+                    <div>
                         <input type="submit" value="Delete list" class="btn btn-danger" />
                     </div>
                 </div>
